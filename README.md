@@ -25,12 +25,6 @@ This will generate a folder named `env` that contains the virtual environment.
 env\Scripts\activate
 ```
 
-### On Windows (PowerShell):
-
-```bash
-.\env\Scripts\activate
-```
-
 After activation, your terminal prompt should start with:
 
 ```
