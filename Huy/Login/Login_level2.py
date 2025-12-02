@@ -1,21 +1,16 @@
-# -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-# [MỚI] Import Service để sửa lỗi executable_path
-from selenium.webdriver.edge.service import Service 
-import unittest, time, csv, os 
+import unittest, time, csv, os
+from selenium.webdriver.edge.service import Service
 
 class TC_Level2(unittest.TestCase):
     def setUp(self):
-        # --- CẤU HÌNH ĐƯỜNG DẪN ĐỘNG (Relative Path) ---
-        # Lấy đường dẫn của thư mục chứa file code này
+
         current_dir = os.path.dirname(os.path.abspath(__file__))
         
-        # Nối với tên file driver (Đảm bảo file driver nằm cùng thư mục)
         driver_path = os.path.join(current_dir, 'msedgedriver.exe')
         
-        # [SỬA LỖI] Khởi tạo driver chuẩn Selenium 4 (Dùng Service)
         service = Service(executable_path=driver_path)
         self.driver = webdriver.Edge(service=service)
         
@@ -23,31 +18,27 @@ class TC_Level2(unittest.TestCase):
         self.base_url = "https://www.google.com/"
         self.verificationErrors = []
     
-    def test_level2_datadriven(self):
+    def test_login_level2(self):
         driver = self.driver
         
         try:
-            # --- CẤU HÌNH ĐƯỜNG DẪN CSV ĐỘNG ---
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            # Sửa tên file CSV cho đúng với file bạn đang dùng
             csv_path = os.path.join(current_dir, 'data_login_level2.csv')
             
             with open(csv_path, mode='r', encoding='utf-8-sig') as csvfile:
                 reader = csv.DictReader(csvfile)
                 
                 for row in reader:
-                    # --- PHẦN 1: LẤY DỮ LIỆU KIỂM THỬ (DATA) ---
                     tc_id = row['ID']
                     email_data = row['email'] if row['email'] else ""
                     password_data = row['password'] if row['password'] else ""
                     test_type = row['type']
                     expected_res = row['expected result']
                     
-                    # --- PHẦN 2: LẤY CẤU TRÚC WEB (ELEMENTS & URL) ---
                     url_web = row['url']
-                    email_elm_id = row['col_email_id']
-                    pass_elm_id = row['col_pass_id']
-                    login_elm_xpath = row['col_login_xpath']
+                    email_elm_id = row['col_email_id']     
+                    pass_elm_id = row['col_pass_id']        
+                    login_elm_xpath = row['col_login_xpath'] 
 
                     if not email_data and not password_data: continue
 
@@ -55,9 +46,6 @@ class TC_Level2(unittest.TestCase):
 
                     driver.get(url_web)
                     
-                    # --- XỬ LÝ LOGIC ---
-
-                    # 1. TRƯỜNG HỢP LOCKED
                     if test_type == "locked":
                         print(f"   -> [{tc_id}] Dang thu dang nhap nhieu lan...")
                         actual_text = ""
@@ -85,7 +73,6 @@ class TC_Level2(unittest.TestCase):
                         except AssertionError as e:
                             print(f"   -> [{tc_id}] [FAIL] Lock message mismatch.")
 
-                    # 2. TRƯỜNG HỢP SUCCESS
                     elif test_type == "success":
                         driver.find_element(By.ID, email_elm_id).clear()
                         driver.find_element(By.ID, email_elm_id).send_keys(email_data)
@@ -103,7 +90,6 @@ class TC_Level2(unittest.TestCase):
                         except AssertionError as e: 
                             print(f"   -> [{tc_id}] [FAIL] Logout button NOT found")
                         
-                    # 3. TRƯỜNG HỢP FAIL
                     elif test_type == "fail":
                         driver.find_element(By.ID, email_elm_id).clear()
                         driver.find_element(By.ID, email_elm_id).send_keys(email_data)
@@ -124,7 +110,7 @@ class TC_Level2(unittest.TestCase):
                              print(f"   -> [{tc_id}] [FAIL] No error message found.")
 
         except FileNotFoundError:
-            print("Lỗi: Không tìm thấy file CSV. Hãy đảm bảo file CSV nằm CÙNG THƯ MỤC với file code này.")
+            print("Lỗi: Không tìm thấy file CSV. Hãy đảm bảo file 'data_login_level2.csv' nằm CÙNG THƯ MỤC với file code.")
         except KeyError as e:
             print(f"Lỗi: File CSV thiếu cột {e}. Hãy kiểm tra lại header trong file Excel.")
     
