@@ -1,13 +1,13 @@
 ﻿ID,type,expected result,password,email,telephone,First Name,Last Name,Password Confirm,Privacy Policy
-TC-004-013,register successful,Your Account Has Been Created!,1111,fvduuaa@gmail.com,1111,aaaa,aaaa,1111,TRUE
-TC-004-019,register successful,Your Account Has Been Created!,1111,fjafjf123@gmail.com,1111,aaaa,aaaa,1111,TRUE
+TC-004-013,register successful,Your Account Has Been Created!,1111,fvdcvuuaaavc12@gmail.com,1111,aaaa,aaaa,1111,TRUE
+TC-004-019,register successful,Your Account Has Been Created!,1111,fjafjf123acvvca4@gmail.com,1111,aaaa,aaaa,1111,TRUE
 TC-004-001,password fail,Password must be between 4 and 20 characters!,111,,,,,,
 TC-004-002,password success,Accepted,1111,,,,,,
 TC-004-003,password success,Accepted,11111,,,,,,
-TC-004-004,password success,Accepted,1111111111111111111,,,,,,
-TC-004-005,password success,Accepted,11111111111111111111,,,,,,
+TC-004-004,password success,Accepted,1.11111E+18,,,,,,
+TC-004-005,password success,Accepted,1.11111E+19,,,,,,
 TC-004-028,password fail,Password must be between 4 and 20 characters!,111,,,,,,
-TC-004-006,password fail,Password must be between 4 and 20 characters!,111111111111111111111,,,,,,
+TC-004-006,password fail,Password must be between 4 and 20 characters!,1.11111E+20,,,,,,
 TC-004-007,email success,Accepted,,user123@test.com,,,,,
 TC-004-008,email fail 1,Please include an @ in the email address,,usertest.com,,,,,
 TC-004-009,email fail 2,E-Mail Address does not appear to be valid!,,cxvxcv@com,,,,,
