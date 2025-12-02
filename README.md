@@ -10,7 +10,7 @@ Follow the steps below to set up and run the project on your local machine.
 Run the following command in the project root (where `requirements.txt` is located):
 
 ```bash
-python312 -m venv env
+python -m venv env
 ```
 
 This will generate a folder named `env` that contains the virtual environment.
