@@ -1,0 +1,29 @@
+﻿ID,type,expected result,password,email,telephone,First Name,Last Name,Password Confirm,Privacy Policy
+TC-004-013,register successful,Your Account Has Been Created!,1111,fvdcvuuaaavc12@gmail.com,1111,aaaa,aaaa,1111,TRUE
+TC-004-019,register successful,Your Account Has Been Created!,1111,fjafjf123acvvca4@gmail.com,1111,aaaa,aaaa,1111,TRUE
+TC-004-001,password fail,Password must be between 4 and 20 characters!,111,,,,,,
+TC-004-002,password success,Accepted,1111,,,,,,
+TC-004-003,password success,Accepted,11111,,,,,,
+TC-004-004,password success,Accepted,1111111111111111111,,,,,,
+TC-004-005,password success,Accepted,11111111111111111111,,,,,,
+TC-004-028,password fail,Password must be between 4 and 20 characters!,111,,,,,,
+TC-004-006,password fail,Password must be between 4 and 20 characters!,111111111111111111111,,,,,,
+TC-004-007,email success,Accepted,,user123@test.com,,,,,
+TC-004-008,email fail 1,Please include an @ in the email address,,usertest.com,,,,,
+TC-004-009,email fail 2,E-Mail Address does not appear to be valid!,,cxvxcv@com,,,,,
+TC-004-014,email fail 3,Warning: E-Mail Address is already registered!,,abc01@gmail.com,,,,,
+TC-004-016,email fail 1,Please include an @ in the email address,,aaaav,,,,,
+TC-004-020,email fail 3,Warning: E-Mail Address is already registered!,,abc01@gmail.com,,,,,
+TC-004-021,email fail 1,Please include an @ in the email address,,asdasd,,,,,
+TC-004-010,telephone success,Accepted,,,987654321,,,,
+TC-004-011,telephone fail,Telephone must be between 3 and 32 characters!,,,12,,,,
+TC-004-027,telephone fail,Telephone must be between 3 and 32 characters!,,,11,,,,
+TC-004-012,missing field,First Name must be between 1 and 32 characters!,,,,,,,
+TC-004-017,missing field 2,E-Mail Address does not appear to be valid!,,,,,,,
+TC-004-024,missing field 3,Last Name must be between 1 and 32 characters!,,,,,,,
+TC-004-015,password mismatch,Warning: Password confirmation does not match password!,3333,,,,,4444,
+TC-004-022,password mismatch,Warning: Password confirmation does not match password!,1111,,,,,2222,
+TC-004-018,privacy not checked,Warning: You must agree to the Privacy Policy!,,,,,,,FALSE
+TC-004-023,privacy not checked,Warning: You must agree to the Privacy Policy!,,,,,,,FALSE
+TC-004-025,first name fail,First Name must be between 1 and 32 characters!,,,,,,,
+TC-004-026,last name fail,Last Name must be between 1 and 32 characters!,,,,,,,
