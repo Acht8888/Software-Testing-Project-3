@@ -10,77 +10,102 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
-class TestAddressBook(unittest.TestCase):
+class TestAddressBookLevel(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
-        """Load test data from CSV once"""
-        csv_path = os.path.join(os.path.dirname(__file__), "group_2.csv")
+        """Load CSV one time"""
+        csv_path = os.path.join(os.path.dirname(__file__), "group_6.csv")
         cls.test_data = []
         with open(csv_path, "r", encoding="utf-8-sig") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
+            for row in csv.DictReader(f):
                 cls.test_data.append(row)
         if not cls.test_data:
-            raise RuntimeError("No rows found in group_2.csv")
+            raise RuntimeError("No rows found in group_6.csv")
 
     def setUp(self):
         service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=service)
         self.driver.implicitly_wait(10)
-        self.base_url = "https://ecommerce-playground.lambdatest.io/"
         self.verificationErrors = []
+        self.passed_rows = []
 
     def tearDown(self):
         try:
             self.driver.quit()
         except:
             pass
+        # In summary
+        print("\n===== Level 2 Test Summary =====")
+        print(f"Passed rows: {len(self.passed_rows)} / {len(self.test_data)}")
+        for row in self.passed_rows:
+            print(f"✅ Passed row: {row}")
+        if self.verificationErrors:
+            print(f"Failed rows: {len(self.verificationErrors)}")
+            for err in self.verificationErrors:
+                print(f"❌ {err}")
         self.assertEqual([], self.verificationErrors)
 
-    # ----------------- Helper Methods -----------------
-    def login(self):
-        driver = self.driver
-        driver.get(self.base_url + "index.php?route=account/login")
-        driver.find_element(By.ID, "input-email").send_keys("khangnha7@gmail.com")
-        driver.find_element(By.ID, "input-password").send_keys("123456")
-        driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
-        WebDriverWait(driver, 5).until(
-            EC.presence_of_element_located((By.LINK_TEXT, "Logout"))
-        )
+    # ---------------------- Helper: Safe URL join ----------------------
+    @staticmethod
+    def join_url(base, path):
+        return base.rstrip("/") + "/" + path.lstrip("/")
 
-    def go_to_addressbook(self):
+    # ---------------------- LOGIN ----------------------
+    def dynamic_login(self, row):
         driver = self.driver
-        addr_link = driver.find_element(By.LINK_TEXT, "Address Book")
-        addr_link.click()
+        driver.get(self.join_url(row["BaseURL"], row["LoginURL"]))
+        driver.find_element(By.CSS_SELECTOR, row["EmailField"]).send_keys(row["Email"])
+        driver.find_element(By.CSS_SELECTOR, row["PasswordField"]).send_keys(row["Password"])
+        driver.find_element(By.CSS_SELECTOR, row["SubmitLogin"]).click()
+        time.sleep(0.3)
+        try:
+            error_text = driver.find_element(By.CSS_SELECTOR, ".alert-danger").text
+            if "No match" in error_text:
+                print(f"❌ Login failed for {row.get('Email','NoEmail')}")
+                return False
+        except NoSuchElementException:
+            pass
+        return True
+
+    # ---------------------- GO TO ADDRESSBOOK ----------------------
+    def go_to_addressbook(self, row):
+        driver = self.driver
+        driver.get(self.join_url(row["BaseURL"], row["AddressBookURL"]))
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.LINK_TEXT, "New Address"))
         )
 
+    # ---------------------- CLICK NEW ADDRESS ----------------------
     def click_new_address(self):
         driver = self.driver
-        new_addr_btn = driver.find_element(By.LINK_TEXT, "New Address")
-        new_addr_btn.click()
+        btn = driver.find_element(By.LINK_TEXT, "New Address")
+        btn.click()
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.ID, "input-firstname"))
         )
 
+    # ---------------------- FILL ADDRESS FORM ----------------------
     def fill_address_form(self, row):
         driver = self.driver
-        # Chỉ bỏ qua company, address_2, default address
         driver.find_element(By.ID, "input-firstname").clear()
         driver.find_element(By.ID, "input-firstname").send_keys(row.get("FirstName", "").strip())
+
         driver.find_element(By.ID, "input-lastname").clear()
         driver.find_element(By.ID, "input-lastname").send_keys(row.get("LastName", "").strip())
+
         driver.find_element(By.ID, "input-address-1").clear()
         driver.find_element(By.ID, "input-address-1").send_keys(row.get("Address1", "").strip())
+
         driver.find_element(By.ID, "input-city").clear()
         driver.find_element(By.ID, "input-city").send_keys(row.get("City", "").strip())
+
         driver.find_element(By.ID, "input-postcode").clear()
         driver.find_element(By.ID, "input-postcode").send_keys(row.get("PostCode", "").strip())
 
-        # Select Country
         country_val = row.get("Country", "").strip()
         country_selected = False
         if country_val and country_val != "(not selected)":
@@ -89,10 +114,8 @@ class TestAddressBook(unittest.TestCase):
                 time.sleep(0.5)
                 country_selected = True
             except:
-                # Nếu country không tồn tại trên dropdown, bỏ qua
                 country_selected = False
 
-        # Select Region/State chỉ khi country hợp lệ
         region_val = row.get("Region/State", "").strip()
         if region_val and region_val != "(not selected)" and country_selected:
             try:
@@ -102,12 +125,12 @@ class TestAddressBook(unittest.TestCase):
                 Select(driver.find_element(By.ID, "input-zone")).select_by_visible_text(region_val)
                 time.sleep(0.5)
             except:
-                pass  # Nếu region không tồn tại, bỏ qua
+                pass
 
-        # Click Continue
         driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
 
-    def logout(self):
+    # ---------------------- LOGOUT ----------------------
+    def logout(self, row):
         driver = self.driver
         try:
             account_menu = WebDriverWait(driver, 5).until(
@@ -119,38 +142,44 @@ class TestAddressBook(unittest.TestCase):
             )
             logout_btn.click()
             WebDriverWait(driver, 5).until(
-                EC.presence_of_element_located((By.ID, "input-email"))
+                EC.presence_of_element_located((By.CSS_SELECTOR, row["EmailField"]))
             )
         except Exception:
             pass
 
-    # ----------------- Test Method -----------------
-    def test_add_addressbook_ddt(self):
-        driver = self.driver
-        self.login()
-
+    # ---------------------- TEST CASE ----------------------
+    def test_add_addressbook_ddt_level2(self):
         for row in self.test_data:
             with self.subTest(data=row):
-                self.go_to_addressbook()
+                ok = self.dynamic_login(row)
+                if not ok:
+                    self.verificationErrors.append(f"[{row.get('Email','NoEmail')}] Login failed")
+                    continue
+
+                self.go_to_addressbook(row)
                 self.click_new_address()
                 self.fill_address_form(row)
-                time.sleep(1)
+                time.sleep(0.5)
 
-                body_text = driver.find_element(By.TAG_NAME, "body").text
+                body_text = self.driver.find_element(By.TAG_NAME, "body").text
 
-                # Lặp qua tất cả cột Expected* để assert nhiều lỗi cùng lúc
-                for key in row:
-                    if key.startswith("Expected") and row[key].strip():
-                        expected = row[key].strip()
+                row_passed = True
+                for i in range(1, 7):  # tối đa 6 expected (Group 1 → 6)
+                    expected = row.get(f"Expected{i}", "").strip()
+                    if expected:
                         try:
                             self.assertIn(expected, body_text)
-                        except AssertionError as e:
-                            self.verificationErrors.append(
-                                f"Data row {row} failed for {key}: {str(e)}"
-                            )
+                        except AssertionError:
+                            self.verificationErrors.append(f"[{row.get('Email','NoEmail')}] Missing {expected}")
+                            row_passed = False
 
-                self.logout()
-                self.login()
+                if row_passed:
+                    self.passed_rows.append(row)
+                    print(f"✅ Passed row: {row}")
+                else:
+                    print(f"❌ Failed row: {row}")
+
+                self.logout(row)
 
 
 if __name__ == "__main__":
