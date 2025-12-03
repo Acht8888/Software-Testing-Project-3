@@ -16,14 +16,14 @@ class TestAddressBook(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Load test data from CSV once"""
-        csv_path = os.path.join(os.path.dirname(__file__), "level_1.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "group_4.csv")
         cls.test_data = []
         with open(csv_path, "r", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 cls.test_data.append(row)
         if not cls.test_data:
-            raise RuntimeError("No rows found in level_1.csv")
+            raise RuntimeError("No rows found in group_4.csv")
 
     def setUp(self):
         service = Service(ChromeDriverManager().install())
@@ -31,12 +31,22 @@ class TestAddressBook(unittest.TestCase):
         self.driver.implicitly_wait(10)
         self.base_url = "https://ecommerce-playground.lambdatest.io/"
         self.verificationErrors = []
+        self.passed_rows = []  # lưu các row pass
 
     def tearDown(self):
         try:
             self.driver.quit()
         except:
             pass
+        # In thông tin tổng kết
+        print("\n===== Test Summary =====")
+        print(f"Passed rows: {len(self.passed_rows)} / {len(self.test_data)}")
+        for row in self.passed_rows:
+            print(f"✅ Passed: {row}")
+        if self.verificationErrors:
+            print(f"Failed rows: {len(self.verificationErrors)}")
+            for err in self.verificationErrors:
+                print(f"❌ {err}")
         self.assertEqual([], self.verificationErrors)
 
     # ----------------- Helper Methods -----------------
@@ -68,7 +78,6 @@ class TestAddressBook(unittest.TestCase):
 
     def fill_address_form(self, row):
         driver = self.driver
-        # Chỉ bỏ qua company, address_2, default address
         driver.find_element(By.ID, "input-firstname").clear()
         driver.find_element(By.ID, "input-firstname").send_keys(row.get("FirstName", "").strip())
         driver.find_element(By.ID, "input-lastname").clear()
@@ -82,18 +91,26 @@ class TestAddressBook(unittest.TestCase):
 
         # Select Country
         country_val = row.get("Country", "").strip()
+        country_selected = False
         if country_val and country_val != "(not selected)":
-            Select(driver.find_element(By.ID, "input-country")).select_by_visible_text(country_val)
-            time.sleep(0.5)
+            try:
+                Select(driver.find_element(By.ID, "input-country")).select_by_visible_text(country_val)
+                time.sleep(0.5)
+                country_selected = True
+            except:
+                country_selected = False
 
-        # Select Region/State
+        # Select Region/State only if country is valid
         region_val = row.get("Region/State", "").strip()
-        if region_val and region_val != "(not selected)":
-            WebDriverWait(driver, 5).until(
-                EC.presence_of_element_located((By.ID, "input-zone"))
-            )
-            Select(driver.find_element(By.ID, "input-zone")).select_by_visible_text(region_val)
-            time.sleep(0.5)
+        if region_val and region_val != "(not selected)" and country_selected:
+            try:
+                WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.ID, "input-zone"))
+                )
+                Select(driver.find_element(By.ID, "input-zone")).select_by_visible_text(region_val)
+                time.sleep(0.5)
+            except:
+                pass
 
         # Click Continue
         driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
@@ -128,14 +145,24 @@ class TestAddressBook(unittest.TestCase):
                 time.sleep(1)
 
                 body_text = driver.find_element(By.TAG_NAME, "body").text
-                expected = row.get("Expected", "").strip()
 
-                try:
-                    self.assertIn(expected, body_text)
-                except AssertionError as e:
-                    self.verificationErrors.append(
-                        f"Data row {row} failed: {str(e)}"
-                    )
+                row_passed = True
+                for key in row:
+                    if key.startswith("Expected") and row[key].strip():
+                        expected = row[key].strip()
+                        try:
+                            self.assertIn(expected, body_text)
+                        except AssertionError as e:
+                            self.verificationErrors.append(
+                                f"Data row {row} failed for {key}: {str(e)}"
+                            )
+                            row_passed = False
+
+                if row_passed:
+                    self.passed_rows.append(row)
+                    print(f"✅ Passed row: {row}")
+                else:
+                    print(f"❌ Failed row: {row}")
 
                 self.logout()
                 self.login()
