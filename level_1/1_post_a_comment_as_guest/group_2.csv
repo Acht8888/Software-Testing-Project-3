@@ -1,0 +1,4 @@
+TestID,Name,Email,Comment,ExpectedResult1,ExpectedResult2
+TC-001-026,AA,name@,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"Warning: Comment Name must be between 3 and 25 characters!","Warning: Invalid email id!"
+TC-001-027,AA,name@example.com,AAAAAAAAAA,"Warning: Comment Name must be between 3 and 25 characters!","Warning: Comment Text must be between 25 and 1000 characters!"
+TC-001-028,AAAAAAAAAA,@example.com,AAAAAAAAAA,"Warning: Invalid email id!","Warning: Comment Text must be between 25 and 1000 characters!"
