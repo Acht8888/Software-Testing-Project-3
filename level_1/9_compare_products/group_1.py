@@ -17,14 +17,14 @@ class TestProductCompare(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Load test data from CSV once"""
-        csv_path = os.path.join(os.path.dirname(__file__), "level_1.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "group_1.csv")
         cls.test_data = []
         with open(csv_path, "r", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 cls.test_data.append(row)
         if not cls.test_data:
-            raise RuntimeError("No rows found in level_1.csv")
+            raise RuntimeError("No rows found in group_1.csv")
 
     def setUp(self):
         service = Service(ChromeDriverManager().install())
@@ -36,8 +36,9 @@ class TestProductCompare(unittest.TestCase):
     def tearDown(self):
         try:
             self.driver.quit()
-        except:
-            pass
+            print("✅ Browser closed")
+        except Exception as e:
+            print(f"[Warning] Error quitting browser: {e}")
         self.assertEqual([], self.verificationErrors)
 
     # ----------------- Helper Methods -----------------
@@ -50,43 +51,33 @@ class TestProductCompare(unittest.TestCase):
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.LINK_TEXT, "Logout"))
         )
+        print("✅ Login successful")
 
     def select_products(self, row):
         driver = self.driver
         driver.get(self.base_url + "index.php?route=product/category&path=57")
         actions = ActionChains(driver)
-
         num = int(row["NumProducts"])
-
-        # Lấy danh sách toàn bộ sản phẩm
         products = driver.find_elements(By.CSS_SELECTOR, "div.product-layout")
 
         for i in range(num):
             product = products[i]
-
             try:
-                # 1. Hover vào ảnh sản phẩm
                 img = product.find_element(By.CSS_SELECTOR, ".image img")
                 actions.move_to_element(img).perform()
                 time.sleep(0.6)
 
-                # 2. Lấy tất cả các nút action (4 nút)
                 action_buttons = product.find_elements(By.CSS_SELECTOR, "div.product-action button")
-
                 if len(action_buttons) < 4:
-                    print(f"Product {i+1}: action buttons not found (expected 4). Found: {len(action_buttons)}")
+                    print(f"[Warning] Product {i+1}: action buttons not found (expected 4). Found: {len(action_buttons)}")
                     continue
 
-                # 3. Nút thứ 4 = nút Compare
                 compare_btn = action_buttons[3]
-
-                # 4. Click bằng JS tránh overlay
                 driver.execute_script("arguments[0].click();", compare_btn)
+                print(f"✅ Product {i+1} added to Compare")
                 time.sleep(1)
-
             except Exception as e:
-                pass   
-
+                print(f"[Warning] Could not select product {i+1}: {e}")
 
     def go_to_compare(self):
         driver = self.driver
@@ -94,10 +85,11 @@ class TestProductCompare(unittest.TestCase):
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
         )
+        print("✅ Opened Compare Page")
 
     def remove_products(self, num_products):
         driver = self.driver
-        for _ in range(num_products):
+        for i in range(num_products):
             try:
                 btn = WebDriverWait(driver, 3).until(
                     EC.element_to_be_clickable((By.LINK_TEXT, "Remove"))
@@ -105,7 +97,9 @@ class TestProductCompare(unittest.TestCase):
                 driver.execute_script("arguments[0].scrollIntoView(true);", btn)
                 driver.execute_script("arguments[0].click();", btn)
                 WebDriverWait(driver, 3).until(EC.staleness_of(btn))
-            except:
+                print(f"✅ Removed product {i+1}")
+            except Exception as e:
+                print(f"[Info] No more products to remove or error: {e}")
                 break
 
     def logout(self):
@@ -115,6 +109,7 @@ class TestProductCompare(unittest.TestCase):
                 EC.presence_of_element_located((By.XPATH, "//div[@id='widget-navbar-217834']/ul/li[6]"))
             )
             ActionChains(driver).move_to_element(account_menu).perform()
+
             logout_btn = WebDriverWait(driver, 5).until(
                 EC.element_to_be_clickable((By.XPATH, "//div[@id='widget-navbar-217834']/ul/li[6]/ul/li[6]/a/div/span"))
             )
@@ -122,8 +117,9 @@ class TestProductCompare(unittest.TestCase):
             WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.ID, "input-email"))
             )
+            print("✅ Logout successful")
         except Exception as e:
-            pass   
+            print(f"[Warning] Logout failed: {e}")
 
     # ----------------- Test Method -----------------
     def test_product_compare_ddt(self):
@@ -133,11 +129,18 @@ class TestProductCompare(unittest.TestCase):
         for row in self.test_data:
             with self.subTest(data=row):
                 num_products = int(row["NumProducts"])
+                print(f"\n--- Running subTest for {num_products} products ---")
+
                 # 1. Select products
+                print("Selecting products...")
                 self.select_products(row)
+
                 # 2. Go to Compare page
+                print("Opening Compare Page...")
                 self.go_to_compare()
+
                 # 3. Verify Expected results
+                print("Verifying expected products...")
                 body_text = driver.find_element(By.TAG_NAME, "body").text
                 for j in range(1, 5):
                     expected_key = f"Expected{j}"
@@ -145,16 +148,24 @@ class TestProductCompare(unittest.TestCase):
                     if expected:
                         try:
                             self.assertIn(expected, body_text)
+                            print(f"✅ Found expected product: {expected}")
                         except AssertionError as e:
+                            print(f"❌ Missing expected product: {expected}")
                             self.verificationErrors.append(
                                 f"Data row {row} failed for {expected_key}: {str(e)}"
                             )
+
                 # 4. Remove products
                 if num_products > 0:
+                    print("Removing products...")
                     self.remove_products(num_products)
+
                 # 5. Logout at the end of testcase
+                print("Logging out...")
                 self.logout()
+
                 # Re-login for next subTest
+                print("Logging in again for next subTest...")
                 self.login()
 
 
