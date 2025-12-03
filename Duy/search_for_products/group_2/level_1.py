@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-class TestGroup1Level1(unittest.TestCase):
+class TestGroup2Level1(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -37,13 +37,13 @@ class TestGroup1Level1(unittest.TestCase):
         self.driver.quit()
         self.assertEqual([], self.verificationErrors)
 
-    def test_search_ddt(self):
+    def test_search_default_list_ddt(self):
         driver = self.driver
 
         for row in self.test_data:
             with self.subTest(test_id=row.get("TestID", ""), data=row):
                 keyword = row["SearchKeyword"]
-                expected = row["ExpectedResult"]
+                unwanted_message = row["UnwantedMessage"]
 
                 # 1. Open home page (fixed URL for Level 1)
                 driver.get(self.base_url)
@@ -58,10 +58,10 @@ class TestGroup1Level1(unittest.TestCase):
                 driver.find_element(By.XPATH, "//button[@type='submit']").click()
                 time.sleep(2)  # simple wait; can be improved with WebDriverWait
 
-                # 4. Verify expected result text appears
+                # 4. Verify the unwanted message is NOT shown
                 body_text = driver.find_element(By.TAG_NAME, "body").text
                 try:
-                    self.assertIn(expected, body_text)
+                    self.assertNotIn(unwanted_message, body_text)
                 except AssertionError as e:
                     # Save failure but continue with other rows
                     self.verificationErrors.append(
