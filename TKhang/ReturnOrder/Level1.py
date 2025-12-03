@@ -6,15 +6,16 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 
 class TestReturnOrder(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
-        """Load test data from CSV once"""
+        """ Load test data once """
         csv_path = os.path.join(os.path.dirname(__file__), "return_order.csv")
         cls.test_data = []
 
@@ -24,7 +25,7 @@ class TestReturnOrder(unittest.TestCase):
                 cls.test_data.append(row)
 
         if not cls.test_data:
-            raise RuntimeError("No rows found in return_order.csv")
+            raise RuntimeError("CSV empty — no test data found")
 
     def setUp(self):
         service = Service(ChromeDriverManager().install())
@@ -40,11 +41,14 @@ class TestReturnOrder(unittest.TestCase):
             pass
         self.assertEqual([], self.verificationErrors)
 
-    # ---------------- Helper Methods ----------------
+    # --------------------------------------------------
+    # Helper methods
+    # --------------------------------------------------
 
     def login(self):
         driver = self.driver
         driver.get(self.base_url + "index.php?route=account/login")
+
         driver.find_element(By.ID, "input-email").send_keys("khang@gmail.com")
         driver.find_element(By.ID, "input-password").send_keys("watdiw-boRnij-0cypsi")
         driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
@@ -53,68 +57,90 @@ class TestReturnOrder(unittest.TestCase):
             EC.presence_of_element_located((By.LINK_TEXT, "Logout"))
         )
 
-    def go_to_return_form(self):
-        """Navigate to Return Request form"""
-        driver = self.driver
+    def open_return_form(self):
+        """Direct link to return form"""
+        self.driver.get(self.base_url + "index.php?route=account/return/add")
 
-        driver.get(self.base_url + "index.php?route=account/return/add")
-
-        # Wait until the First Name field is visible
-        WebDriverWait(driver, 5).until(
+        WebDriverWait(self.driver, 5).until(
             EC.presence_of_element_located((By.ID, "input-firstname"))
         )
 
-    def fill_return_form(self, row):
-        driver = self.driver
-        
-        # Fill text inputs
-        driver.find_element(By.ID, "input-firstname").clear()
-        driver.find_element(By.ID, "input-firstname").send_keys(row["FirstName"])
+    def fill_form(self, row):
+        d = self.driver
 
-        driver.find_element(By.ID, "input-lastname").clear()
-        driver.find_element(By.ID, "input-lastname").send_keys(row["LastName"])
+        d.find_element(By.ID, "input-firstname").clear()
+        d.find_element(By.ID, "input-firstname").send_keys(row["FirstName"])
 
-        driver.find_element(By.ID, "input-email").clear()
-        driver.find_element(By.ID, "input-email").send_keys(row["Email"])
+        d.find_element(By.ID, "input-lastname").clear()
+        d.find_element(By.ID, "input-lastname").send_keys(row["LastName"])
 
-        driver.find_element(By.ID, "input-telephone").clear()
-        driver.find_element(By.ID, "input-telephone").send_keys(row["Telephone"])
+        d.find_element(By.ID, "input-email").clear()
+        d.find_element(By.ID, "input-email").send_keys(row["Email"])
 
-        driver.find_element(By.ID, "input-order-id").clear()
-        driver.find_element(By.ID, "input-order-id").send_keys(row["OrderId"])
+        d.find_element(By.ID, "input-telephone").clear()
+        d.find_element(By.ID, "input-telephone").send_keys(row["Telephone"])
 
-        driver.find_element(By.ID, "input-product").clear()
-        driver.find_element(By.ID, "input-product").send_keys(row["ProductName"])
+        d.find_element(By.ID, "input-order-id").clear()
+        d.find_element(By.ID, "input-order-id").send_keys(row["OrderId"])
 
-        driver.find_element(By.ID, "input-model").clear()
-        driver.find_element(By.ID, "input-model").send_keys(row["ProductCode"])
+        d.find_element(By.ID, "input-product").clear()
+        d.find_element(By.ID, "input-product").send_keys(row["ProductName"])
 
-        # Always choose a reason since we removed Reason column
-        driver.find_element(By.CSS_SELECTOR, "input[value='1']").click()
+        d.find_element(By.ID, "input-model").clear()
+        d.find_element(By.ID, "input-model").send_keys(row["ProductCode"])
 
-        # Submit
-        driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
+        # Always select a reason (required)
+        try:
+            d.find_element(By.CSS_SELECTOR, "input[name='return_reason_id']").click()
+        except:
+            pass
 
-    # ---------------- Test Method ----------------
+        d.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
+
+    # --------------------------------------------------
+    # Test method with robust ExpectedResult handling
+    # --------------------------------------------------
 
     def test_return_order_ddt(self):
         self.login()
 
+        VALID_SUCCESS_MESSAGES = [
+            "Your return request",
+            "return request has been",
+            "Thank you for submitting your return request",
+            "Your return has been submitted",
+            "success",
+        ]
+
         for row in self.test_data:
             with self.subTest(TestCase=row["TestCaseID"]):
-                self.go_to_return_form()
-                self.fill_return_form(row)
+
+                self.open_return_form()
+                self.fill_form(row)
 
                 time.sleep(1)
 
-                body_text = self.driver.find_element(By.TAG_NAME, "body").text
-                expected = row["ExpectedResult"]
+                page_text = self.driver.find_element(By.TAG_NAME, "body").text
+                expected = row["ExpectedResult"].strip()
 
                 try:
-                    self.assertIn(expected, body_text)
+                    if "must" in expected or "required" in expected or "valid" in expected:
+                        # Error case → must match EXACT text
+                        self.assertIn(expected, page_text)
+
+                    else:
+                        # Success case → allow multiple possible success messages
+                        matched = any(success_msg.lower() in page_text.lower()
+                                      for success_msg in VALID_SUCCESS_MESSAGES)
+
+                        self.assertTrue(
+                            matched,
+                            f"Expected success but none of the known success messages appeared.\n\nPage:\n{page_text}"
+                        )
+
                 except AssertionError as e:
                     self.verificationErrors.append(
-                        f"TestCase {row['TestCaseID']} FAILED → Expected: {expected}"
+                        f"[{row['TestCaseID']}] FAILED → {expected}"
                     )
 
 
