@@ -10,15 +10,10 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-class Test(unittest.TestCase):
+class TestGroup1Level1(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """
-        Load test data from CSV once for all tests.
-        CSV file must be in the same folder as this Test.py
-        and have headers: Name,Email,Comment,ExpectedResult
-        """
         csv_path = os.path.join(os.path.dirname(__file__), "level_1.csv")
         cls.test_data = []
 
@@ -31,7 +26,6 @@ class Test(unittest.TestCase):
             raise RuntimeError("No rows found in data_input.csv")
 
     def setUp(self):
-        # WebDriver setup (no executable_path, Selenium 4-style)
         service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=service)
         self.driver.implicitly_wait(10)
@@ -43,14 +37,6 @@ class Test(unittest.TestCase):
         self.assertEqual([], self.verificationErrors)
 
     def test_comment_ddt(self):
-        """
-        Data-driven test:
-        - For each row in data_input.csv:
-          + Open article page
-          + Fill Name, Email, Comment from CSV
-          + Submit
-          + Check ExpectedResult from CSV appears on page
-        """
         driver = self.driver
 
         for row in self.test_data:
@@ -60,10 +46,8 @@ class Test(unittest.TestCase):
                 comment = row["Comment"]
                 expected = row["ExpectedResult"]
 
-                # 1. Open blog article page (fixed URL for Level 1)
                 driver.get(self.base_url + "index.php?route=extension/maza/blog/article&article_id=37")
 
-                # 2. Fill the form (using fixed locators)
                 name_input = driver.find_element(By.ID, "input-name")
                 name_input.clear()
                 name_input.send_keys(name)
@@ -76,16 +60,13 @@ class Test(unittest.TestCase):
                 comment_input.clear()
                 comment_input.send_keys(comment)
 
-                # 3. Submit comment
                 driver.find_element(By.ID, "button-comment").click()
-                time.sleep(2)  # simple wait; can be improved with WebDriverWait
+                time.sleep(2)
 
-                # 4. Verify expected result text appears
                 body_text = driver.find_element(By.TAG_NAME, "body").text
                 try:
                     self.assertIn(expected, body_text)
                 except AssertionError as e:
-                    # Save failure but continue with other rows
                     self.verificationErrors.append(
                         f"TestID {row.get('TestID')} failed: {str(e)}"
                     )

@@ -26,7 +26,6 @@ class TestGroup1Level1(unittest.TestCase):
             raise RuntimeError("No rows found in level_1.csv")
 
     def setUp(self):
-        # WebDriver setup (Selenium 4-style)
         service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=service)
         self.driver.implicitly_wait(10)
@@ -45,25 +44,20 @@ class TestGroup1Level1(unittest.TestCase):
                 keyword = row["SearchKeyword"]
                 expected = row["ExpectedResult"]
 
-                # 1. Open home page (fixed URL for Level 1)
                 driver.get(self.base_url)
 
-                # 2. Focus and fill the search box (using fixed locator)
                 search_input = driver.find_element(By.NAME, "search")
                 search_input.click()
                 search_input.clear()
                 search_input.send_keys(keyword)
 
-                # 3. Click the SEARCH button
                 driver.find_element(By.XPATH, "//button[@type='submit']").click()
-                time.sleep(2)  # simple wait; can be improved with WebDriverWait
+                time.sleep(2)
 
-                # 4. Verify expected result text appears
                 body_text = driver.find_element(By.TAG_NAME, "body").text
                 try:
                     self.assertIn(expected, body_text)
                 except AssertionError as e:
-                    # Save failure but continue with other rows
                     self.verificationErrors.append(
                         f"TestID {row.get('TestID')} failed: {str(e)} | Row: {row}"
                     )

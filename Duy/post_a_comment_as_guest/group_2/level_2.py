@@ -40,7 +40,6 @@ class TestGroup2Level2(unittest.TestCase):
 
         for row in self.test_data:
             with self.subTest(test_id=row.get("TestID"), data=row):
-                # Dynamic items (Level 2)
                 url = row["URL"]
                 name_selector = row["NameSelector"]
                 email_selector = row["EmailSelector"]
@@ -48,17 +47,14 @@ class TestGroup2Level2(unittest.TestCase):
                 submit_selector = row["SubmitSelector"]
                 result_selector = row["ResultSelector"]
 
-                # Input data & expected results
                 name = row["Name"]
                 email = row["Email"]
                 comment = row["Comment"]
                 expected1 = row["ExpectedResult1"]
                 expected2 = row["ExpectedResult2"]
 
-                # 1. Open article page from data file
                 driver.get(url)
 
-                # 2. Fill the form using dynamic selectors
                 name_input = driver.find_element(By.CSS_SELECTOR, name_selector)
                 name_input.clear()
                 name_input.send_keys(name)
@@ -71,11 +67,9 @@ class TestGroup2Level2(unittest.TestCase):
                 comment_input.clear()
                 comment_input.send_keys(comment)
 
-                # 3. Submit comment
                 driver.find_element(By.CSS_SELECTOR, submit_selector).click()
-                time.sleep(2)  # could be replaced with WebDriverWait
+                time.sleep(2)
 
-                # 4. Verify BOTH expected result texts appear
                 result_element = driver.find_element(By.CSS_SELECTOR, result_selector)
                 result_text = result_element.text
 
