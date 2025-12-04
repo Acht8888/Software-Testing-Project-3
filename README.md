@@ -52,19 +52,3 @@ When you're done working, run:
 ```bash
 deactivate
 ```
-
----
-
-## ✔ Notes
-
-- Always **activate the virtual environment** before running Python scripts or installing packages.
-- The `env/` folder is ignored by Git through `.gitignore`.
-- If you install new packages, don’t forget to update the requirements file:
-
-```bash
-pip freeze > requirements.txt
-```
-
----
-
-If someone else clones the repo, they only need to follow the same steps above.
