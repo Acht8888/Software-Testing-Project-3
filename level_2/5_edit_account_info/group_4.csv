@@ -1,0 +1,2 @@
+URL,FirstNameSelector,LastNameSelector,EmailSelector,TelephoneSelector,SubmitSelector,ErrorSelector,AlertSelector,FirstName,LastName,Email,Telephone,Expected1,Expected2,Expected3,Expected4
+https://ecommerce-playground.lambdatest.io/index.php?route=account/edit,#input-firstname,#input-lastname,#input-email,#input-telephone,"input[type='submit']",.text-danger,.alert-danger, , , ,1,First Name must be between 1 and 32 characters!,Last Name must be between 1 and 32 characters!,E-Mail Address does not appear to be valid!,Telephone must be between 3 and 32 characters!
