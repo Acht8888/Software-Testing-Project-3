@@ -10,11 +10,11 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-class TestGroup1Level1(unittest.TestCase):
+class Test(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        csv_path = os.path.join(os.path.dirname(__file__), "group_1.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "search_for_products.csv")
         cls.test_data = []
 
         with open(csv_path, "r", encoding="utf-8-sig") as f:
@@ -42,7 +42,12 @@ class TestGroup1Level1(unittest.TestCase):
         for row in self.test_data:
             with self.subTest(test_id=row.get("TestID", ""), data=row):
                 keyword = row["SearchKeyword"]
-                expected = row["ExpectedResult"]
+                expected_cell = row["ExpectedResult"].strip()
+                expected_messages = [
+                    msg.strip()
+                    for msg in expected_cell.split("||")
+                    if msg.strip()
+                ]
 
                 driver.get(self.base_url)
 
@@ -55,12 +60,17 @@ class TestGroup1Level1(unittest.TestCase):
                 time.sleep(2)
 
                 body_text = driver.find_element(By.TAG_NAME, "body").text
-                try:
-                    self.assertIn(expected, body_text)
-                except AssertionError as e:
-                    self.verificationErrors.append(
-                        f"TestID {row.get('TestID')} failed: {str(e)} | Row: {row}"
-                    )
+                for msg in expected_messages:
+                    try:
+                        self.assertIn(
+                            msg,
+                            body_text,
+                            f"Expected message not found: '{msg}'",
+                        )
+                    except AssertionError as e:
+                        self.verificationErrors.append(
+                            f"TestID {row.get('TestID')} failed for expected '{msg}': {str(e)}"
+                        )
 
 
 if __name__ == "__main__":

@@ -10,11 +10,11 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-class TestGroup2Level1(unittest.TestCase):
+class Test(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        csv_path = os.path.join(os.path.dirname(__file__), "group_2.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "post_a_comment_as_guest.csv")
         cls.test_data = []
 
         with open(csv_path, "r", encoding="utf-8-sig") as f:
@@ -23,7 +23,7 @@ class TestGroup2Level1(unittest.TestCase):
                 cls.test_data.append(row)
 
         if not cls.test_data:
-            raise RuntimeError("No rows found in group2_level_1.csv")
+            raise RuntimeError("No rows found in data_input.csv")
 
     def setUp(self):
         service = Service(ChromeDriverManager().install())
@@ -40,17 +40,19 @@ class TestGroup2Level1(unittest.TestCase):
         driver = self.driver
 
         for row in self.test_data:
-            with self.subTest(test_id=row.get("TestID"), data=row):
+            with self.subTest(test_id=row.get("TestID", ""), data=row):
                 name = row["Name"]
                 email = row["Email"]
                 comment = row["Comment"]
-                expected1 = row["ExpectedResult1"]
-                expected2 = row["ExpectedResult2"]
 
-                driver.get(
-                    self.base_url
-                    + "index.php?route=extension/maza/blog/article&article_id=37"
-                )
+                expected_cell = row["ExpectedResult"].strip()
+                expected_messages = [
+                    msg.strip()
+                    for msg in expected_cell.split("||")
+                    if msg.strip()
+                ]
+
+                driver.get(self.base_url + "index.php?route=extension/maza/blog/article&article_id=37")
 
                 name_input = driver.find_element(By.ID, "input-name")
                 name_input.clear()
@@ -68,14 +70,18 @@ class TestGroup2Level1(unittest.TestCase):
                 time.sleep(2)
 
                 body_text = driver.find_element(By.TAG_NAME, "body").text
-                try:
-                    self.assertIn(expected1, body_text)
-                    self.assertIn(expected2, body_text)
-                except AssertionError as e:
-                    self.verificationErrors.append(
-                        f"TestID {row.get('TestID')} failed: {str(e)} | Row: {row}"
-                    )
-
+                
+                for msg in expected_messages:
+                    try:
+                        self.assertIn(
+                            msg,
+                            body_text,
+                            f"Expected message not found: '{msg}'",
+                        )
+                    except AssertionError as e:
+                        self.verificationErrors.append(
+                            f"TestID {row.get('TestID')} failed for expected '{msg}': {str(e)}"
+                        )
 
 if __name__ == "__main__":
     unittest.main()

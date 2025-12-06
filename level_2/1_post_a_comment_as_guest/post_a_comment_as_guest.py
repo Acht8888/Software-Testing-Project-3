@@ -10,11 +10,11 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-class TestGroup1Level2(unittest.TestCase):
+class Test(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        csv_path = os.path.join(os.path.dirname(__file__), "group_1.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "post_a_comment_as_guest.csv")
         cls.test_data = []
 
         with open(csv_path, "r", encoding="utf-8-sig") as f:
@@ -23,7 +23,7 @@ class TestGroup1Level2(unittest.TestCase):
                 cls.test_data.append(row)
 
         if not cls.test_data:
-            raise RuntimeError("No rows found in level_2.csv")
+            raise RuntimeError("No rows found in csv file")
 
     def setUp(self):
         service = Service(ChromeDriverManager().install())
@@ -51,7 +51,9 @@ class TestGroup1Level2(unittest.TestCase):
                 name_value = row["Name"]
                 email_value = row["Email"]
                 comment_value = row["Comment"]
-                expected = row["ExpectedResult"]
+
+                expected_cell = row["ExpectedResult"].strip()
+                expected_messages = [msg.strip() for msg in expected_cell.split("||") if msg.strip()]
 
                 driver.get(url)
 
@@ -73,12 +75,17 @@ class TestGroup1Level2(unittest.TestCase):
                 result_element = driver.find_element(By.CSS_SELECTOR, result_selector)
                 result_text = result_element.text
 
-                try:
-                    self.assertIn(expected, result_text)
-                except AssertionError as e:
-                    self.verificationErrors.append(
-                        f"TestID {row.get('TestID')} failed: {str(e)}"
-                    )
+                for msg in expected_messages:
+                    try:
+                        self.assertIn(
+                            msg,
+                            result_text,
+                            f"Expected message not found: '{msg}'"
+                        )
+                    except AssertionError as e:
+                        self.verificationErrors.append(
+                            f"TestID {row.get('TestID')} failed for expected '{msg}': {str(e)}"
+                        )
 
 
 if __name__ == "__main__":

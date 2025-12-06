@@ -1,0 +1,10 @@
+TestID,URL,SearchBoxSelector,SearchButtonSelector,ResultSelector,SearchKeyword,ExpectedResult
+TC-002-001,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,iPod Touch,iPod Touch
+TC-002-002,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,iPod@Touch,There is no product that matches the search criteria.
+TC-002-003,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,iPd Tuch,There is no product that matches the search criteria.
+TC-004-004,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,,HTC Touch HD || Palm Treo Pro || Canon EOS 5D
+TC-004-005,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,     ,HTC Touch HD || Palm Treo Pro || Canon EOS 5D
+TC-002-006,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,asdfghjkl,There is no product that matches the search criteria.
+TC-002-007,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,iPod Touch,iPod Touch
+TC-004-008,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,,HTC Touch HD || Palm Treo Pro || Canon EOS 5D
+TC-004-009,https://ecommerce-playground.lambdatest.io/,"input[name=""search""]","button[type=""submit""]",body,     ,HTC Touch HD || Palm Treo Pro || Canon EOS 5D

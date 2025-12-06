@@ -1,3 +1,0 @@
-TestID,URL,SearchBoxSelector,SearchButtonSelector,ResultSelector,SearchKeyword,UnwantedMessage
-TC-004-010,https://ecommerce-playground.lambdatest.io/,input[name="search"],button[type="submit"],body,,"There is no product that matches the search criteria."
-TC-004-011,https://ecommerce-playground.lambdatest.io/,input[name="search"],button[type="submit"],body,"     ","There is no product that matches the search criteria."

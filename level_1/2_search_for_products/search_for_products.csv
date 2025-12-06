@@ -2,4 +2,9 @@ TestID,SearchKeyword,ExpectedResult
 TC-002-001,iPod Touch,iPod Touch
 TC-002-002,iPod@Touch,There is no product that matches the search criteria.
 TC-002-003,iPd Tuch,There is no product that matches the search criteria.
+TC-002-004,,HTC Touch HD || Palm Treo Pro || Canon EOS 5D
+TC-002-005,     ,HTC Touch HD || Palm Treo Pro || Canon EOS 5D
 TC-002-006,asdfghjkl,There is no product that matches the search criteria.
+TC-002-007,iPod Touch,iPod Touch
+TC-002-008,,HTC Touch HD || Palm Treo Pro || Canon EOS 5D
+TC-002-009,     ,HTC Touch HD || Palm Treo Pro || Canon EOS 5D
