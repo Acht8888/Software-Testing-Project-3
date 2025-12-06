@@ -22,9 +22,8 @@ class Register_Level2(unittest.TestCase):
         
         try:
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            csv_path = os.path.join(current_dir, 'group_1.csv')
+            csv_path = os.path.join(current_dir, 'register.csv')
             
-            # --- 1. ĐỌC DỮ LIỆU ---
             rows = []
             with open(csv_path, mode='r', encoding='utf-8-sig') as csvfile:
                 reader = csv.DictReader(csvfile)
@@ -32,13 +31,11 @@ class Register_Level2(unittest.TestCase):
                 for row in reader:
                     rows.append(row)
 
-            # --- 2. CHẠY TEST ---
             for row in rows:
                 tc_id = row.get('ID', '')
                 test_type = row.get('type', '').strip()
                 expected_res = row.get('expected result', '').strip()
                 
-                # SINH EMAIL MỚI CHO SUCCESS CASE
                 if "register successful" in test_type:
                     allowed_chars = string.ascii_lowercase + string.digits
                     random_str = ''.join(random.choices(allowed_chars, k=10))
@@ -54,7 +51,6 @@ class Register_Level2(unittest.TestCase):
                 confirm = row.get('Password Confirm', '').strip()
                 privacy = row.get('Privacy Policy', '').strip().upper()
 
-                # LOCATORS
                 url_web = row.get('url')
                 id_fn = row.get('fn_id')
                 id_ln = row.get('ln_id')
@@ -65,14 +61,12 @@ class Register_Level2(unittest.TestCase):
                 xp_privacy = row.get('privacy_xpath')
                 xp_submit = row.get('submit_xpath')
                 
-                # [ĐÃ SỬA] Đọc từ cột 'error_xpath' thay vì 'error_locator'
                 xp_error = row.get('error_xpath')
 
                 print(f"\n--- Running [{tc_id}] Type: {test_type} ---")
 
                 driver.get(url_web)
                 
-                # --- ĐIỀN FORM ---
                 if fname:
                     driver.find_element(By.ID, id_fn).clear()
                     driver.find_element(By.ID, id_fn).send_keys(fname)
@@ -92,7 +86,6 @@ class Register_Level2(unittest.TestCase):
                     driver.find_element(By.ID, id_confirm).clear()
                     driver.find_element(By.ID, id_confirm).send_keys(confirm)
                 
-                # Xử lý Privacy
                 should_click = False
                 if privacy == "TRUE": should_click = True
                 if "email fail 3" in test_type: should_click = True 
@@ -103,7 +96,6 @@ class Register_Level2(unittest.TestCase):
                         driver.execute_script("arguments[0].click();", element)
                     except: pass
                 
-                # BẤM CONTINUE
                 try:
                     driver.find_element(By.XPATH, xp_submit).click()
                 except:
@@ -111,9 +103,7 @@ class Register_Level2(unittest.TestCase):
                 
                 time.sleep(2)
                 
-                # --- VERIFY KẾT QUẢ ---
                 
-                # 1. Register Successful
                 if "register successful" in test_type:
                     try:
                         if "success" in driver.current_url or "Created" in driver.page_source:
@@ -124,7 +114,6 @@ class Register_Level2(unittest.TestCase):
                     except: 
                         print(f"   -> [{tc_id}] [FAIL] Error checking success condition.")
 
-                # 2. HTML5 Check (Email Fail 1)
                 elif xp_error == "HTML5_CHECK":
                     is_valid = driver.execute_script(f"return document.getElementById('{id_email}').checkValidity()")
                     if is_valid == False:
@@ -132,22 +121,18 @@ class Register_Level2(unittest.TestCase):
                     else:
                         print(f"   -> [{tc_id}] [FAIL] HTML5 Validation PASSED but expected FAIL.")
 
-                # 3. Case Accepted (Không được có lỗi)
                 elif expected_res == "Accepted":
                     if xp_error:
                         self.check_no_error(driver, xp_error, tc_id)
                     else:
-                        # Nếu file CSV chưa điền error_xpath cho dòng Accepted -> Check chung chung
                         self.check_no_error(driver, "//div[contains(@class, 'text-danger')]", tc_id)
 
-                # 4. Case Fail (Phải có lỗi)
                 else:
                     if xp_error: 
                         self.check_error(driver, xp_error, expected_res, tc_id)
                     else:
                         print(f"   -> [{tc_id}] [FAIL] Missing 'error_xpath' in CSV for this Fail case.")
 
-            # --- GHI CSV ---
             with open(csv_path, mode='w', encoding='utf-8-sig', newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
@@ -155,7 +140,7 @@ class Register_Level2(unittest.TestCase):
             print("\n[INFO] CSV File Updated.")
 
         except FileNotFoundError:
-            print("Lỗi: Không tìm thấy file CSV group_1.csv.")
+            print("Lỗi: Không tìm thấy file CSV register.csv.")
         except KeyError as e:
             print(f"Lỗi: File CSV thiếu cột {e}.")
 

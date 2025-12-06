@@ -21,7 +21,7 @@ class TC_Level2(unittest.TestCase):
         
         try:
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            csv_path = os.path.join(current_dir, 'group_1.csv')
+            csv_path = os.path.join(current_dir, 'login.csv')
             
             rows = []
             with open(csv_path, mode='r', encoding='utf-8-sig') as csvfile:
@@ -130,7 +130,7 @@ class TC_Level2(unittest.TestCase):
             print("\n[INFO] CSV File Updated with new random emails.")
 
         except FileNotFoundError:
-            print("Lỗi: Không tìm thấy file CSV group_1.csv.")
+            print("Lỗi: Không tìm thấy file CSV login.csv.")
         except KeyError as e:
             print(f"Lỗi: File CSV thiếu cột {e}. Hãy kiểm tra lại header trong file Excel.")
     

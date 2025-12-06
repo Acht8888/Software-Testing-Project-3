@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -22,9 +21,8 @@ class Register_Level1(unittest.TestCase):
         
         try:
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            csv_path = os.path.join(current_dir, 'group_1.csv')
+            csv_path = os.path.join(current_dir, 'register.csv')
             
-            # --- BƯỚC 1: ĐỌC DỮ LIỆU ---
             rows = []
             with open(csv_path, mode='r', encoding='utf-8-sig') as csvfile:
                 reader = csv.DictReader(csvfile)
@@ -32,13 +30,11 @@ class Register_Level1(unittest.TestCase):
                 for row in reader:
                     rows.append(row)
 
-            # --- BƯỚC 2: CHẠY TEST ---
             for row in rows:
                 tc_id = row.get('ID', '')
                 test_type = row.get('type', '').strip()
                 expected_res = row.get('expected result', '')
                 
-                # Logic sinh email random (giữ nguyên)
                 if "register successful" in test_type:
                     allowed_chars = string.ascii_lowercase + string.digits
                     random_str = ''.join(random.choices(allowed_chars, k=10))
@@ -57,7 +53,6 @@ class Register_Level1(unittest.TestCase):
 
                 driver.get("https://ecommerce-playground.lambdatest.io/index.php?route=account/register")
                 
-                # --- ĐIỀN FORM ---
                 if fname:
                     driver.find_element(By.ID, "input-firstname").clear()
                     driver.find_element(By.ID, "input-firstname").send_keys(fname)
@@ -77,12 +72,11 @@ class Register_Level1(unittest.TestCase):
                     driver.find_element(By.ID, "input-confirm").clear()
                     driver.find_element(By.ID, "input-confirm").send_keys(confirm)
                 
-                # [SỬA ĐỔI 1] Logic tick Privacy:
-                # Tick nếu CSV = TRUE HOẶC nếu là case "email fail 3" (để check trùng email)
+
                 should_tick_privacy = False
                 if privacy == "TRUE": 
                     should_tick_privacy = True
-                elif "email fail 3" in test_type: # Bắt buộc tick để hiện lỗi trùng email
+                elif "email fail 3" in test_type: 
                     should_tick_privacy = True
                 
                 if should_tick_privacy:
@@ -90,11 +84,9 @@ class Register_Level1(unittest.TestCase):
                         driver.find_element(By.XPATH, "//label[@for='input-agree']").click()
                     except: pass
                 
-                # Bấm Continue
                 driver.find_element(By.XPATH, "//input[@value='Continue']").click()
                 time.sleep(2)
                 
-                # --- VERIFY KẾT QUẢ ---
                 if "register successful" in test_type:
                     try:
                         if "success" in driver.current_url or "Created" in driver.page_source:
@@ -109,9 +101,7 @@ class Register_Level1(unittest.TestCase):
                         self.check_no_error(driver, "//input[@id='input-password']/following-sibling::div", tc_id)
                     else:
                         found_pass = self.check_error_message(driver, "//input[@id='input-password']/following-sibling::div", expected_res, tc_id)
-                        # [SỬA ĐỔI 2] Nếu tìm lỗi password mà không thấy -> Tức là web chấp nhận -> FAIL
                         if not found_pass:
-                             # Thử check bên ô confirm
                              found_confirm = self.check_error_message(driver, "//input[@id='input-confirm']/following-sibling::div", expected_res, tc_id)
                              if not found_confirm:
                                  print(f"   -> [{tc_id}] [FAIL] Expected error '{expected_res}' but NO error appeared (Web accepted it!).")
@@ -148,7 +138,6 @@ class Register_Level1(unittest.TestCase):
                 elif "mismatch" in test_type:
                     self.check_error_message(driver, "//input[@id='input-confirm']/following-sibling::div", expected_res, tc_id)
 
-            # --- GHI LẠI FILE CSV ---
             with open(csv_path, mode='w', encoding='utf-8-sig', newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
@@ -161,7 +150,6 @@ class Register_Level1(unittest.TestCase):
         except KeyError as e:
             print(f"Lỗi: File CSV thiếu cột {e}.")
 
-    # --- HÀM PHỤ TRỢ ---
     def check_error_message(self, driver, xpath, expected, tc_id):
         try:
             actual = driver.find_element(By.XPATH, xpath).text
@@ -169,11 +157,9 @@ class Register_Level1(unittest.TestCase):
                 print(f"   -> [{tc_id}] [PASS] Error match found: {expected}")
                 return True
             else:
-                # Có lỗi hiện ra, nhưng nội dung sai
                 print(f"   -> [{tc_id}] [FAIL] Mismatch! Expected: '{expected}' - Actual: '{actual}'")
                 return True
         except NoSuchElementException:
-            # Không thấy lỗi nào cả
             return False
 
     def check_no_error(self, driver, xpath, tc_id):
