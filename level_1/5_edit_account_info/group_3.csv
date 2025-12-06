@@ -1,0 +1,8 @@
+FirstName,LastName,Email,Telephone,Expected1,Expected2,Expected3
+, , ,012345678,First Name must be between 1 and 32 characters!,Last Name must be between 1 and 32 characters!,E-Mail Address does not appear to be valid!
+,,jd92k3wq@example.com,1,First Name must be between 1 and 32 characters!,Last Name must be between 1 and 32 characters!,Telephone must be between 3 and 32 characters!
+,,jd92k3wq@example.com,111111111111111111111111111111111,First Name must be between 1 and 32 characters!,Last Name must be between 1 and 32 characters!,Telephone must be between 3 and 32 characters!
+John,, ,1,Last Name must be between 1 and 32 characters!,E-Mail Address does not appear to be valid!,Telephone must be between 3 and 32 characters!
+John,, ,111111111111111111111111111111111,Last Name must be between 1 and 32 characters!,E-Mail Address does not appear to be valid!,Telephone must be between 3 and 32 characters!
+, Doe,,1,First Name must be between 1 and 32 characters!,E-Mail Address does not appear to be valid!,Telephone must be between 3 and 32 characters!
+, Doe,,111111111111111111111111111111111,First Name must be between 1 and 32 characters!,E-Mail Address does not appear to be valid!,Telephone must be between 3 and 32 characters!

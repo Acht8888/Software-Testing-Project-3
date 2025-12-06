@@ -1,0 +1,21 @@
+FirstName,LastName,Email,Telephone,Expected
+,ValidLast,jd92k3wq@example.com,012345678,First Name must be between 1 and 32 characters!
+A,ValidLast,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+AA,ValidLast,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,ValidLast,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,ValidLast,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,ValidLast,jd92k3wq@example.com,012345678,First Name must be between 1 and 32 characters!
+ValidFirst,,jd92k3wq@example.com,012345678,Last Name must be between 1 and 32 characters!
+ValidFirst,A,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+ValidFirst,AA,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+ValidFirst,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+ValidFirst,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,jd92k3wq@example.com,012345678,Success: Your account has been successfully updated.
+ValidFirst,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,jd92k3wq@example.com,012345678,Last Name must be between 1 and 32 characters!
+ValidFirst,ValidLast,,012345678,E-Mail Address does not appear to be valid!
+ValidFirst,ValidLast,jd92k3wq@example.com,,Telephone must be between 3 and 32 characters!
+ValidFirst,ValidLast,jd92k3wq@example.com,1,Telephone must be between 3 and 32 characters!
+ValidFirst,ValidLast,jd92k3wq@example.com,11,Telephone must be between 3 and 32 characters!
+ValidFirst,ValidLast,jd92k3wq@example.com,111,Success: Your account has been successfully updated.
+ValidFirst,ValidLast,jd92k3wq@example.com,1111111111111111111111111111111,Success: Your account has been successfully updated.
+ValidFirst,ValidLast,jd92k3wq@example.com,11111111111111111111111111111111,Success: Your account has been successfully updated.
+ValidFirst,ValidLast,jd92k3wq@example.com,111111111111111111111111111111111,Telephone must be between 3 and 32 characters!
