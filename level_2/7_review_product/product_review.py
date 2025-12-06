@@ -20,7 +20,7 @@ class TestProductReviewLevel2(unittest.TestCase):
         print("🚀 Starting Product Review Level 2 Test Suite...")
 
         # Load CSV
-        csv_path = os.path.join(os.path.dirname(__file__), "product_review_2.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "product_review.csv")
         if not os.path.exists(csv_path):
             raise FileNotFoundError(f"CSV not found: {csv_path}")
 

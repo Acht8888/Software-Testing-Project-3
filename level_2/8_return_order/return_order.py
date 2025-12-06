@@ -18,7 +18,7 @@ class TestReturnOrderLevel2(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Load test data once"""
-        csv_path = os.path.join(os.path.dirname(__file__), "return_order_2.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "return_order.csv")
         cls.test_data = []
 
         if not os.path.exists(csv_path):
