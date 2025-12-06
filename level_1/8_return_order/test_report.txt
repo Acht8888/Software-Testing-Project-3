@@ -1,0 +1,157 @@
+================================================================================
+TEST EXECUTION REPORT
+================================================================================
+Test Suite: Return Order Functionality
+Start Time: 2025-12-07 00:07:01
+End Time: 2025-12-07 00:12:31
+Duration: 0:05:30.156083
+
+Total Test Cases: 42
+Passed: 40 (95.2%)
+Failed: 2 (4.8%)
+
+================================================================================
+PASSED TEST CASES (40)
+================================================================================
+1. TC-008-001
+   Expected: First Name must be between 1 and 32 characters!
+
+2. TC-008-002
+   Expected: Your return request has been submitted successfully!.
+
+3. TC-008-003
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+4. TC-008-004
+   Expected: First Name must be between 1 and 32 characters!
+
+5. TC-008-005
+   Expected: Telephone must be between 3 and 32 characters!
+
+6. TC-008-006
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+7. TC-008-007
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+8. TC-008-008
+   Expected: Telephone must be between 3 and 32 characters!
+
+9. TC-008-010
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+10. TC-008-011
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+11. TC-008-012
+   Expected: Product Name must be greater than 3 and less than 255 characters!
+
+12. TC-008-013
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+13. TC-008-015
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+14. TC-008-016
+   Expected: Product Name must be greater than 3 and less than 255 characters!
+
+15. TC-008-017
+   Expected: Last Name must be between 1 and 32 characters!
+
+16. TC-008-018
+   Expected: Last Name must be between 1 and 32 characters!
+
+17. TC-008-019
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+18. TC-008-020
+   Expected: Last Name must be between 1 and 32 characters!
+
+19. TC-008-021
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+20. TC-008-022
+   Expected: E-Mail Address does not appear to be valid!
+
+21. TC-008-024
+   Expected: First Name must be between 1 and 32 characters!
+
+22. TC-008-025
+   Expected: Telephone must be between 3 and 32 characters!
+
+23. TC-008-026
+   Expected: Order ID required!
+
+24. TC-008-027
+   Expected: Product Name must be greater than 3 and less than 255 characters!
+
+25. TC-008-027
+   Expected: Product Model must be greater than 3 and less than 64 characters!
+
+26. TC-008-028
+   Expected: You must select a return product reason!
+
+27. TC-008-029
+   Expected: Last Name must be between 1 and 32 characters!
+
+28. TC-008-030
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+29. TC-008-031
+   Expected: Last Name must be between 1 and 32 characters!
+
+30. TC-008-032
+   Expected: Product Model must be greater than 3 and less than 64 characters!
+
+31. TC-008-033
+   Expected: You must select a return product reason!
+
+32. TC-008-034
+   Expected: Thank you for submitting your return request. Your request has been sent to the relevant department for processing. You will be notified via e-mail as to the status of your request.
+
+33. TC-008-035
+   Expected: First Name must be between 1 and 32 characters!
+
+34. TC-008-036
+   Expected: Last Name must be between 1 and 32 characters!
+
+35. TC-008-037
+   Expected: E-Mail Address does not appear to be valid!
+
+36. TC-008-038
+   Expected: Telephone must be between 3 and 32 characters!
+
+37. TC-008-039
+   Expected: Order ID required!
+
+38. TC-008-040
+   Expected: Product Name must be greater than 3
+
+39. TC-008-041
+   Expected: Product Model must be greater than 3
+
+40. TC-008-042
+   Expected: You must select a return product reason!
+
+
+================================================================================
+FAILED TEST CASES (2)
+================================================================================
+1. TC-008-009
+   Expected: Product Name must be greater than 3 and less than 255 characters!
+   Reason: ❌ VALIDATION BUG DETECTED!
+Expected validation error: Product Name must be greater than 3 and less than 255 characters!
+But form was submitted successfully.
+The website failed to validate the input properly.
+
+2. TC-008-014
+   Expected: Product Name must be greater than 3 and less than 255 characters!
+   Reason: ❌ VALIDATION BUG DETECTED!
+Expected validation error: Product Name must be greater than 3 and less than 255 characters!
+But form was submitted successfully.
+The website failed to validate the input properly.
+
+
+================================================================================
+END OF REPORT
+================================================================================

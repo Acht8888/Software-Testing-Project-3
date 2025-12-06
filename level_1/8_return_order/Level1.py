@@ -360,7 +360,6 @@ class TestReturnOrder(unittest.TestCase):
         print(f"\nTotal Test Cases: {total_tests}")
         print(f"✅ Passed: {passed} ({passed/total_tests*100:.1f}%)")
         print(f"❌ Failed: {failed} ({failed/total_tests*100:.1f}%)")
-        print(f"⚠️  Errors: {errors} ({errors/total_tests*100:.1f}%)")
         
         # Passed tests summary
         if cls.test_results['passed']:
@@ -382,24 +381,17 @@ class TestReturnOrder(unittest.TestCase):
                 print(f"   Reason: {test['reason'][:100]}...")
         
         # Error tests summary
-        if cls.test_results['errors']:
-            print(f"\n{'='*80}")
-            print(f"⚠️  ERROR TEST CASES ({errors})")
-            print(f"{'='*80}")
-            for i, test in enumerate(cls.test_results['errors'], 1):
-                print(f"{i}. {test['test_case_id']}")
-                print(f"   Expected: {test['expected'][:60]}...")
-                print(f"   Reason: {test['reason'][:100]}...")
+       
         
         print(f"\n{'='*80}")
         print("END OF REPORT")
         print("="*80 + "\n")
         
         # Save report to file
-        cls.save_report_to_file(duration, total_tests, passed, failed, errors)
+        cls.save_report_to_file(duration, total_tests, passed, failed)
     
     @classmethod
-    def save_report_to_file(cls, duration, total_tests, passed, failed, errors):
+    def save_report_to_file(cls, duration, total_tests, passed, failed):
         """Save detailed report to file"""
         report_path = os.path.join(os.path.dirname(__file__), "test_report.txt")
         
@@ -414,7 +406,7 @@ class TestReturnOrder(unittest.TestCase):
             f.write(f"\nTotal Test Cases: {total_tests}\n")
             f.write(f"Passed: {passed} ({passed/total_tests*100:.1f}%)\n")
             f.write(f"Failed: {failed} ({failed/total_tests*100:.1f}%)\n")
-            f.write(f"Errors: {errors} ({errors/total_tests*100:.1f}%)\n")
+            #f.write(f"Errors: {errors} ({errors/total_tests*100:.1f}%)\n")
             
             if cls.test_results['passed']:
                 f.write(f"\n{'='*80}\n")
@@ -433,14 +425,7 @@ class TestReturnOrder(unittest.TestCase):
                     f.write(f"   Expected: {test['expected']}\n")
                     f.write(f"   Reason: {test['reason']}\n\n")
             
-            if cls.test_results['errors']:
-                f.write(f"\n{'='*80}\n")
-                f.write(f"ERROR TEST CASES ({errors})\n")
-                f.write(f"{'='*80}\n")
-                for i, test in enumerate(cls.test_results['errors'], 1):
-                    f.write(f"{i}. {test['test_case_id']}\n")
-                    f.write(f"   Expected: {test['expected']}\n")
-                    f.write(f"   Reason: {test['reason']}\n\n")
+           
             
             f.write(f"\n{'='*80}\n")
             f.write("END OF REPORT\n")

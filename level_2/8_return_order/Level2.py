@@ -38,7 +38,7 @@ class TestReturnOrderLevel2(unittest.TestCase):
         cls.test_results = {
             'passed': [],
             'failed': [],
-            'errors': []
+           # 'errors': []
         }
         cls.start_time = datetime.now()
 
@@ -353,7 +353,7 @@ class TestReturnOrderLevel2(unittest.TestCase):
         total_tests = len(cls.test_data)
         passed = len(cls.test_results['passed'])
         failed = len(cls.test_results['failed'])
-        errors = len(cls.test_results['errors'])
+       # errors = len(cls.test_results['errors'])
         
         # Console report
         print("\n" + "="*80)
@@ -366,7 +366,7 @@ class TestReturnOrderLevel2(unittest.TestCase):
         print(f"\nTotal Test Cases: {total_tests}")
         print(f"✅ Passed: {passed} ({passed/total_tests*100:.1f}%)")
         print(f"❌ Failed: {failed} ({failed/total_tests*100:.1f}%)")
-        print(f"⚠️  Errors: {errors} ({errors/total_tests*100:.1f}%)")
+       # print(f"⚠️  Errors: {errors} ({errors/total_tests*100:.1f}%)")
         
         # Passed tests summary
         if cls.test_results['passed']:
@@ -390,7 +390,7 @@ class TestReturnOrderLevel2(unittest.TestCase):
         # Error tests summary
         if cls.test_results['errors']:
             print(f"\n{'='*80}")
-            print(f"⚠️  ERROR TEST CASES ({errors})")
+           # print(f"⚠️  ERROR TEST CASES ({errors})")
             print(f"{'='*80}")
             for i, test in enumerate(cls.test_results['errors'], 1):
                 print(f"{i}. {test['test_case_id']}")
@@ -402,7 +402,7 @@ class TestReturnOrderLevel2(unittest.TestCase):
         print("="*80 + "\n")
         
         # Save report to file
-        cls.save_report_to_file(duration, total_tests, passed, failed, errors)
+        cls.save_report_to_file(duration, total_tests, passed, failed, )
     
     @classmethod
     def save_report_to_file(cls, duration, total_tests, passed, failed, errors):

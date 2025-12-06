@@ -61,7 +61,6 @@ class TestProductReviewLevel2(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.end_time = datetime.now()
-        cls.generate_report()
         print("🛑 Closing browser...")
         cls.driver.quit()
 
@@ -71,12 +70,18 @@ class TestProductReviewLevel2(unittest.TestCase):
 
     @classmethod
     def load_product_page(cls):
+        cls.product_url = "https://ecommerce-playground.lambdatest.io/index.php?route=product/product&product_id=104"
+
+        # Load product page once
         print("📄 Loading product page...")
         cls.driver.get(cls.product_url)
+        cls.wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        time.sleep(2)  # Wait for full page load including scripts
+        
 
         # Wait for body
-        cls.wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-        time.sleep(1)
+        #cls.wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        #time.sleep(1)
 
         # Scroll to review form
         review_form = cls.wait.until(
@@ -231,6 +236,7 @@ class TestProductReviewLevel2(unittest.TestCase):
     # REPORT
     # ---------------------------------------------------------
 
+    '''
     @classmethod
     def generate_report(cls):
         print("\n" + "="*80)
@@ -238,12 +244,8 @@ class TestProductReviewLevel2(unittest.TestCase):
         print("="*80)
 
         print("Passed:", cls.test_results["passed"])
-        print("Failed:", cls.test_results["failed"])
-        print("Errors:", cls.test_results["errors"])
 
-        print("="*80)
-        print("END OF REPORT\n")
-
+    '''
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
