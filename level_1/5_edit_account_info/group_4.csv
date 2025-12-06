@@ -1,2 +1,0 @@
-FirstName,LastName,Email,Telephone,Expected1,Expected2,Expected3,Expected4
-, , ,1,First Name must be between 1 and 32 characters!,Last Name must be between 1 and 32 characters!,E-Mail Address does not appear to be valid!,Telephone must be between 3 and 32 characters!

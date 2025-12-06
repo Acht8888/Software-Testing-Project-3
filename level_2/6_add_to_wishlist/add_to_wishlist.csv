@@ -1,0 +1,3 @@
+BaseURL,LoginURL,EmailField,PasswordField,SubmitLogin,Email,Password,CategoryURL,WishlistURL,ProductName,Expected
+https://ecommerce-playground.lambdatest.io,index.php?route=account/login,#input-email,#input-password,input[type='submit'],bangdeptrai13579@gmail.com,123456789,index.php?route=product/category&path=57,index.php?route=account/wishlist,,No results!
+https://ecommerce-playground.lambdatest.io,index.php?route=account/login,#input-email,#input-password,input[type='submit'],bangdeptrai13579@gmail.com,123456789,index.php?route=product/category&path=57,index.php?route=account/wishlist,HTC Touch HD,HTC Touch HD
