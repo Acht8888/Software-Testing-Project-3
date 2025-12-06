@@ -18,13 +18,13 @@ class TestAddressBookLevel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Load CSV one time"""
-        csv_path = os.path.join(os.path.dirname(__file__), "group_5.csv")
+        csv_path = os.path.join(os.path.dirname(__file__), "add_edit_address_book.csv")
         cls.test_data = []
         with open(csv_path, "r", encoding="utf-8-sig") as f:
             for row in csv.DictReader(f):
                 cls.test_data.append(row)
         if not cls.test_data:
-            raise RuntimeError("No rows found in group_5.csv")
+            raise RuntimeError("No rows found in add_edit_address_book.csv")
 
     def setUp(self):
         service = Service(ChromeDriverManager().install())
