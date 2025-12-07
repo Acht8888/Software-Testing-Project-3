@@ -60,7 +60,7 @@ class TestCompareProductsLevel2(unittest.TestCase):
         try:
             error_text = driver.find_element(By.CSS_SELECTOR, ".alert-danger").text
             if "No match" in error_text:
-                print("❌ Login failed")
+                print("Login failed")
                 return False
         except NoSuchElementException:
             # Không tìm thấy alert-danger → coi là login thành công

@@ -36,7 +36,7 @@ class TestProductCompare(unittest.TestCase):
     def tearDown(self):
         try:
             self.driver.quit()
-            print("✅ Browser closed")
+            print("Browser closed")
         except Exception as e:
             print(f"[Warning] Error quitting browser: {e}")
         self.assertEqual([], self.verificationErrors)
@@ -51,7 +51,7 @@ class TestProductCompare(unittest.TestCase):
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.LINK_TEXT, "Logout"))
         )
-        print("✅ Login successful")
+        print("Login successful")
 
     def select_products(self, row):
         driver = self.driver
@@ -74,7 +74,7 @@ class TestProductCompare(unittest.TestCase):
 
                 compare_btn = action_buttons[3]
                 driver.execute_script("arguments[0].click();", compare_btn)
-                print(f"✅ Product {i+1} added to Compare")
+                print(f"Product {i+1} added to Compare")
                 time.sleep(1)
             except Exception as e:
                 print(f"[Warning] Could not select product {i+1}: {e}")
@@ -85,7 +85,7 @@ class TestProductCompare(unittest.TestCase):
         WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
         )
-        print("✅ Opened Compare Page")
+        print("Opened Compare Page")
 
     def remove_products(self, num_products):
         driver = self.driver
@@ -97,9 +97,9 @@ class TestProductCompare(unittest.TestCase):
                 driver.execute_script("arguments[0].scrollIntoView(true);", btn)
                 driver.execute_script("arguments[0].click();", btn)
                 WebDriverWait(driver, 3).until(EC.staleness_of(btn))
-                print(f"✅ Removed product {i+1}")
+                print(f"Removed product {i+1}")
             except Exception as e:
-                print(f"[Info] No more products to remove or error: {e}")
+                
                 break
 
     def logout(self):
@@ -117,9 +117,9 @@ class TestProductCompare(unittest.TestCase):
             WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.ID, "input-email"))
             )
-            print("✅ Logout successful")
+            print("Logout successful")
         except Exception as e:
-            print(f"[Warning] Logout failed: {e}")
+            pass
 
     # ----------------- Test Method -----------------
     def test_product_compare_ddt(self):
@@ -148,9 +148,9 @@ class TestProductCompare(unittest.TestCase):
                     if expected:
                         try:
                             self.assertIn(expected, body_text)
-                            print(f"✅ Found expected product: {expected}")
+                            print(f"Found expected product: {expected}")
                         except AssertionError as e:
-                            print(f"❌ Missing expected product: {expected}")
+                            print(f"Missing expected product: {expected}")
                             self.verificationErrors.append(
                                 f"Data row {row} failed for {expected_key}: {str(e)}"
                             )
